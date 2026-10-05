@@ -27,6 +27,8 @@ const fmtK = (n: number) => (n >= 1000 ? (n / 1000).toFixed(1) + "K" : String(n)
 
 export default function Game() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const uiAreaRef = useRef<HTMLDivElement>(null);
+  const [ui, setUi] = useState({ w: 400, h: 820, s: 1 });
   const engineRef = useRef<GameEngine | null>(null);
   const [screen, setScreen] = useState<Screen>("menu");
   const [save, setSave] = useState<SaveData>(DEFAULT_SAVE);
@@ -62,6 +64,22 @@ export default function Game() {
     setMuted(!muted);
     if (muted) sfx.click();
   };
+
+  // Scale the whole HUD/menu layer from a 400x820 design size to the actual frame.
+  useEffect(() => {
+    const el = uiAreaRef.current;
+    if (!el) return;
+    const fit = () => {
+      const w = el.clientWidth, h = el.clientHeight;
+      if (!w || !h) return;
+      const sc = Math.max(0.68, Math.min(1.45, Math.min(w / 400, h / 800)));
+      setUi({ w: w / sc, h: h / sc, s: sc });
+    };
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     const id = setInterval(() => setChatIdx((i) => (i + 1) % CHAT.length), 3500);
@@ -140,6 +158,8 @@ export default function Game() {
     <div className="stage">
       <div className="phone">
         <canvas ref={canvasRef} className="game-canvas" />
+        <div className="ui-area" ref={uiAreaRef}>
+        <div className="ui" style={{ width: ui.w, height: ui.h, transform: `scale(${ui.s})` }}>
 
         {/* ---------- Top resource bar ---------- */}
         <div className="topbar">
@@ -291,6 +311,12 @@ export default function Game() {
             </div>
           </div>
         )}
+        </div>
+        </div>
+      </div>
+      <div className="rotate-hint">
+        <div className="rotate-phone" />
+        <p>Rotate your device to portrait to play</p>
       </div>
     </div>
   );

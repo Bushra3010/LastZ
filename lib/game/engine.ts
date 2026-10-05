@@ -207,7 +207,8 @@ export class GameEngine {
     this.canvas.style.width = w + "px";
     this.canvas.style.height = h + "px";
     this.cx = w / 2;
-    this.R0 = w * 0.47;
+    // on wide/short frames (tablets, desktop) size the world by height so characters keep proportions
+    this.R0 = Math.min(w, h * 0.56) * 0.47;
     this.horizon = -0.2 * h;
     const y0 = 0.78 * h;
     this.K = this.R0 * D0;
