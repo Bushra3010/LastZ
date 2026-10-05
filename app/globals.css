@@ -234,3 +234,6 @@ button { font-family: inherit; cursor: pointer; border: 0; }
 .stats span { color: #a9bccb; }
 .stats b { display: flex; align-items: center; gap: 4px; }
 .stats .reward b { color: #ffe08a; }
+
+/* Hide the "Powered by Netlify" badge that Netlify injects on deployed sites. */
+#nl-badge-frame { display: none !important; }
